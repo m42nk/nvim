@@ -1,4 +1,5 @@
 local O = {}
+
 local vim = vim
 local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
 
@@ -20,81 +21,74 @@ O.setup = function()
     use 'wbthomason/packer.nvim'
 
     use {
-      'nvim-treesitter/nvim-treesitter',
+      'neovim/nvim-lspconfig',
       config = function()
-        require('m42nk/treesitter').setup()
-      end
-      
-    }
-    use 'nvim-treesitter/nvim-treesitter-textobjects'
+        local on_attach = function(client, bufnr)
+          local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+          local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-    use 'neovim/nvim-lspconfig'
-    use 'hrsh7th/nvim-cmp'
-    use 'hrsh7th/cmp-nvim-lsp'
+          -- Enable completion triggered by <c-x><c-o>
+          buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-    use { 
-      'nvim-telescope/telescope.nvim', 
-      requires = { 'nvim-lua/plenary.nvim' },
-      config = function()
-        require('m42nk/telescope').setup()
+          -- Mappings.
+          local opts = { noremap=true, silent=true }
+
+          -- See `:help vim.lsp.*` for documentation on any of the below functions
+          buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+          buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+          buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+          buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+          buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+          buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+          buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+          buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+          buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+          buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+          buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+          buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+          buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+          buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+          buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+          buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+          buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+        end
+
+        --         -- Use a loop to conveniently call 'setup' on multiple servers and
+        --         -- map buffer local keybindings when the language server attaches
+        --         local servers = { 'pyright', 'rust_analyzer', 'tsserver', 'sumneko_lua'}
+        --         for _, lsp in ipairs(servers) do
+        --           require('lspconfig')[lsp].setup {
+        --             on_attach = on_attach,
+        --             flags = {
+        --               debounce_text_changes = 150,
+        --             }
+        --           }
+        --         end
+        -- 
       end
     }
 
     use {
-      'marko-cerovac/material.nvim',
+      'williamboman/nvim-lsp-installer',
       config = function()
-        require('material').setup({
-          contrast = true,
-          borders = false,
-          text_contrast = {
-            lighter = true,
-            darker = true,
-          },
-        })
+        require('lsp/installer').setup()
       end
     }
 
-    use {
-      'nvim-lualine/lualine.nvim',
-      requires = { 'kyazdani42/nvim-web-devicons', opt = true },
-      as = 'lualine',
-      config = function()
-        require('lualine').setup({
-          theme = 'material-nvim',
-        })
-      end
-    }
+
+    --     use {
+    --       'nvim-treesitter/nvim-treesitter',
+    --       config = function()
+    --         require('user/treesitter').setup()
+    --       end
+    --     }
+    --     
+    --     use 'nvim-treesitter/nvim-treesitter-textobjects'
+
+    --     use 'hrsh7th/nvim-cmp'
+    --     use 'hrsh7th/cmp-nvim-lsp'
 
   end)
-
-  vim.g.material_style = "oeceanic"
-  vim.cmd 'colorscheme material'
 end
 
 return O
-
--- -- Install packer
--- require('packer').startup(function()
---   use 'wbthomason/packer.nvim' -- Package manager
---   use 'tpope/vim-fugitive' -- Git commands in nvim
---   use 'tpope/vim-rhubarb' -- Fugitive-companion to interact with github
---   use 'tpope/vim-commentary' -- "gc" to comment visual regions/lines
---   use 'ludovicchabant/vim-gutentags' -- Automatic tags management
---   -- UI to select things (files, grep results, open buffers...)
---   use { 'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' } }
---   use 'joshdick/onedark.vim' -- Theme inspired by Atom
---   use 'itchyny/lightline.vim' -- Fancier statusline
---   -- Add indentation guides even on blank lines
---   use 'lukas-reineke/indent-blankline.nvim'
---   -- Add git related info in the signs columns and popups
---   use { 'lewis6991/gitsigns.nvim', requires = { 'nvim-lua/plenary.nvim' } }
---   -- Highlight, edit, and navigate code using a fast incremental parsing library
---   use 'nvim-treesitter/nvim-treesitter'
---   -- Additional textobjects for treesitter
---   use 'nvim-treesitter/nvim-treesitter-textobjects'
---   use 'neovim/nvim-lspconfig' -- Collection of configurations for built-in LSP client
---   use 'hrsh7th/nvim-cmp' -- Autocompletion plugin
---   use 'hrsh7th/cmp-nvim-lsp'
---   use 'saadparwaiz1/cmp_luasnip'
---   use 'L3MON4D3/LuaSnip' -- Snippets plugin
--- end)
