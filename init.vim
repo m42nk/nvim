@@ -6,7 +6,8 @@ set expandtab
 set shiftwidth=4
 set tabstop=4
 set hidden
-set signcolumn=yes:2
+" set signcolumn=yes:2
+set signcolumn=yes
 set relativenumber
 set number
 set termguicolors
@@ -125,7 +126,7 @@ source ~/.config/nvim/plugins/lastplace.vim
 " " source ~/.config/nvim/plugins/pasta.vim
 " " source ~/.config/nvim/plugins/peekaboo.vim
 source ~/.config/nvim/plugins/phpactor.vim
-source ~/.config/nvim/plugins/polyglot.vim
+" source ~/.config/nvim/plugins/polyglot.vim
 source ~/.config/nvim/plugins/projectionist.vim
 source ~/.config/nvim/plugins/quickscope.vim
 source ~/.config/nvim/plugins/repeat.vim
